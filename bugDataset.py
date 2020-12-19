@@ -19,9 +19,9 @@ indexToLabel = ["Anthrax aterrimus (Bigot)",
                 "Anthrax albosparsus (Bigot)"]
 
 class bugDataset(Dataset):
-    def  __init__(self):
+    def  __init__(self, sourcePath="imgs"):
         super(bugDataset, self).__init__()
-        absPath = os.path.abspath("imgs")
+        absPath = os.path.abspath(sourcePath)
         bugFolders = os.listdir(absPath)
         prepImg = trans.Compose([
             trans.ToTensor(),
