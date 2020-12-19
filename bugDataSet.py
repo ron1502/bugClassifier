@@ -34,17 +34,14 @@ class bugDataset(Dataset):
             imgList = os.listdir(path)
             for i in tqdm(range(0, len(imgList)), folderToName[folder]):
                 imgName = imgList[i]
-                img = Image.open(os.path.join(path,imgName)).resize((1504, 1000))
+                img = Image.open(os.path.join(path,imgName)).resize((752, 500))
                 img = prepImg(img)
                 self.images.append(img)
                 self.labels.append(self.getImgLabel(folder))
 
 
     def getImgLabel(self, folderName):
-        label = torch.zeros(len(indexToLabel), dtype=torch.float32)
-        classIndex = indexToLabel.index(folderToName[folderName])
-        label[classIndex] = 1.0
-        return label
+        return indexToLabel.index(folderToName[folderName])
 
     def __getitem__(self, index):
         return self.images[index], self.labels[index]

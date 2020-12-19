@@ -3,3 +3,4 @@ bin
 imgs
 lib
 pyvenv.cfg
+test

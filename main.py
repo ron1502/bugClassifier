@@ -8,16 +8,20 @@ from bugDataSet import bugDataset
 model = models.resnet50(pretrained=False)
 bugData = bugDataset()
 print("Dataset Size: {}".format(len(bugData)))
-trainLoader = torch.utils.data.DataLoader(bugData, batch_size=8, shuffle=False)
+
+batch_size = 8
+
+trainLoader = torch.utils.data.DataLoader(bugData, batch_size=batch_size, shuffle=False)
 criterion = nn.CrossEntropyLoss()
 optimizer = opt.SGD(model.parameters(), lr=0.1, momentum=0.09)
 
 model.train()
 model.cuda()
 
-epoch = 1
-lossRunSize = 100
+epoch = 4
+lossRunSize = 4
 runLoss = 0.0
+totalRun = len(bugData)/batch_size
 
 for i in range(epoch):
     print("Epoch: {}".format(i))
@@ -36,9 +40,8 @@ for i in range(epoch):
 
         optimizer.step()
 
-        if((((i +1) * j) % lossRunSize)  == 0):
+        if((j % lossRunSize)  == 0):
             run = (i + 1) * j
-            totalRun = epoch * len(dataset)
             runLoss /= lossRunSize
-            print("[{}/{}]Average Loss: {}".format(j, totalRun, runLoss))
+            print("[{}/{}]Average Loss: {}".format(run, totalRun, runLoss))
             runLoss = 0.0
