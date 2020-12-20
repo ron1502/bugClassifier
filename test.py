@@ -20,11 +20,12 @@ correctCount = 0
 
 for i, data in enumerate(testLoader, 0):
     image, label = data
-    image = image.cuda()
 
-    output = model(image)
+    with torch.no_grad():
+        output = model(image)
+
     imgClass = torch.argmax(output).item()
-
+    print(imgClass)
     if imgClass == label.item():
         correctCount += 1
 
