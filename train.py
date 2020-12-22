@@ -5,26 +5,29 @@ import torch.optim as opt
 import torch.nn as nn
 from bugDataset import bugDataset
 import os
+import math
 
 model = models.resnet50(pretrained=False)
 bugData = bugDataset()
 print("Dataset Size: {}".format(len(bugData)))
 
-batch_size = 4
-
-trainLoader = torch.utils.data.DataLoader(bugData, batch_size=batch_size, shuffle=False)
-criterion = nn.CrossEntropyLoss()
-optimizer = opt.SGD(model.parameters(), lr=0.1, momentum=0.09)
-
-model.train()
 model.cuda()
 
-epoch = 4
-lossRunSize = 4
+batch_size = 16
+
+trainLoader = torch.utils.data.DataLoader(bugData, batch_size=batch_size, shuffle=True)
+criterion = nn.CrossEntropyLoss()
+optimizer = opt.SGD(model.parameters(), lr=0.001, momentum=0.09)
+
+model.train()
+
+epoch = 512
+lossRunSize = 50
 runLoss = 0.0
 totalIt = len(bugData)/batch_size * epoch
 it = 0
-
+epochAverageLoss = 0
+accuracy = 0
 for i in range(epoch):
     print("Epoch: {}".format(i))
     for j, data in enumerate(trainLoader, 0):
@@ -38,21 +41,30 @@ for i in range(epoch):
 
         loss = criterion(output, label)
         loss.backward()
-        runLoss += loss.item()
+        lossVal = loss.item()
+        epochAverageLoss += lossVal
+
+        accuracy += torch.sum((torch.argmax(output, dim=1) == label).float()).item()
 
         optimizer.step()
 
-        if((it % lossRunSize)  == 0):
-            run = (i + 1) * j
-            runLoss /= lossRunSize
-            print("[{}/{}]Average Loss: {}".format(it, totalIt, runLoss))
-            runLoss = 0.0
+        if(j % lossRunSize  == 0):
+            print("[{}/{}]Loss: {}".format(it, totalIt, lossVal))
         it += 1
 
-saveDirectory = os.path.join("res", "model")
-if not os.path.exists(saveDirectory):
-    os.makedirs(saveDirectory)
+    if((i + 1) % 128 == 0):
+        saveModel(model, "classificationResnet50-{}".format(i))
 
-savePath = os.path.join(saveDirectory, "classificationResnet50")
-print("Saving model to: {}".format(savePath))
-torch.save(model.state_dict(), os.path.join(savePath))
+    print("\tAverage Loss: {}".format(epochAverageLoss/math.ceil(len(bugData)/batch_size)))
+    print("\tAccuracy: {}".format(accuracy/len(bugData) * 100))
+    epochAverageLoss = 0
+    accuracy = 0
+
+def saveModel(model, fileName):
+    saveDirectory = os.path.join("res", "model")
+    if not os.path.exists(saveDirectory):
+        os.makedirs(saveDirectory)
+
+    savePath = os.path.join(saveDirectory, fileName)
+    print("Saving model to: {}".format(savePath))
+    torch.save(model.state_dict(), os.path.join(savePath))
