@@ -7,6 +7,18 @@ from bugDataset import bugDataset
 import os
 import math
 
+
+
+def saveModel(model, fileName):
+    saveDirectory = os.path.join("res", "model")
+    if not os.path.exists(saveDirectory):
+        os.makedirs(saveDirectory)
+
+    savePath = os.path.join(saveDirectory, fileName)
+    print("Saving model to: {}".format(savePath))
+    torch.save(model.state_dict(), os.path.join(savePath))
+
+
 model = models.resnet50(pretrained=False)
 bugData = bugDataset()
 print("Dataset Size: {}".format(len(bugData)))
@@ -52,19 +64,10 @@ for i in range(epoch):
             print("[{}/{}]Loss: {}".format(it, totalIt, lossVal))
         it += 1
 
-    if((i + 1) % 128 == 0):
+    if((i + 1) % 64 == 0):
         saveModel(model, "classificationResnet50-{}".format(i))
 
     print("\tAverage Loss: {}".format(epochAverageLoss/math.ceil(len(bugData)/batch_size)))
     print("\tAccuracy: {}".format(accuracy/len(bugData) * 100))
     epochAverageLoss = 0
     accuracy = 0
-
-def saveModel(model, fileName):
-    saveDirectory = os.path.join("res", "model")
-    if not os.path.exists(saveDirectory):
-        os.makedirs(saveDirectory)
-
-    savePath = os.path.join(saveDirectory, fileName)
-    print("Saving model to: {}".format(savePath))
-    torch.save(model.state_dict(), os.path.join(savePath))
