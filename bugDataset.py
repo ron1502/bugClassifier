@@ -117,6 +117,7 @@ class bugDataset(Dataset):
         ])
         self.images = []
         self.labels = []
+
         for folder in bugFolders:
             path = os.path.join(absPath, folder)
             imgList = os.listdir(path)

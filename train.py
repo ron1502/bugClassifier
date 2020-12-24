@@ -35,7 +35,6 @@ model.train()
 
 epoch = 512
 lossRunSize = 50
-runLoss = 0.0
 totalIt = len(bugData)/batch_size * epoch
 it = 0
 epochAverageLoss = 0
