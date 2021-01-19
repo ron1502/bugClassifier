@@ -3,7 +3,7 @@ import torch
 import torchvision.models as models
 import torch.optim as opt
 import torch.nn as nn
-from bugDataset import bugDataset
+from bugDataset import *
 import os
 import math
 
@@ -20,7 +20,10 @@ def saveModel(model, fileName):
 
 
 model = models.resnet50(pretrained=False)
-bugData = bugDataset()
+model.fc = nn.Linear(2048, len(indexToLabel), True)
+
+imgPath = os.path.join("8-2Dataset", "train")
+bugData = bugDataset(imgPath)
 print("Dataset Size: {}".format(len(bugData)))
 
 model.cuda()
@@ -64,7 +67,7 @@ for i in range(epoch):
         it += 1
 
     if((i + 1) % 64 == 0):
-        saveModel(model, "classificationResnet50-{}".format(i))
+        saveModel(model, "resnet50-{}".format(i))
 
     print("\tAverage Loss: {}".format(epochAverageLoss/math.ceil(len(bugData)/batch_size)))
     print("\tAccuracy: {}".format(accuracy/len(bugData) * 100))

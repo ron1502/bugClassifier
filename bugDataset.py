@@ -38,7 +38,6 @@ folderToName = {
     "125BOPLO": "Bombylius pulchellus Loew",
     "126BOVFA": "Bombylius varius Fabricius",
     "127BOCOQ": "Bombylius (Parambombylius) coqilletti (Williston)",
-    "127CHRCY": "Unknown species",
     "128CHCME": "Chrysanthrax cypris (Meigen)",
     "128CHESA": "Chrysanthrax edititius (Say)",
     "129CHECU": "Chrysanthrax eudorus (Coquillett)",
@@ -88,7 +87,6 @@ indexToLabel = ["Anthrax aterrimus (Bigot)",
                 "Bombylius pulchellus Loew",
                 "Bombylius varius Fabricius",
                 "Bombylius (Parambombylius) coqilletti (Williston)",
-                "Unknown species",
                 "Chrysanthrax cypris (Meigen)",
                 "Chrysanthrax edititius (Say)",
                 "Chrysanthrax eudorus (Coquillett)",
@@ -123,7 +121,7 @@ class bugDataset(Dataset):
             imgList = os.listdir(path)
             for i in tqdm(range(0, len(imgList)), folderToName[folder]):
                 imgName = imgList[i]
-                img = Image.open(os.path.join(path,imgName)).resize((376, 250))
+                img = Image.open(os.path.join(path,imgName)).resize((376 , 250))
                 img = prepImg(img)
                 self.images.append(img)
                 self.labels.append(self.getImgLabel(folder))

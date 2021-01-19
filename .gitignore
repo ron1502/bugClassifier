@@ -5,3 +5,7 @@ lib
 pyvenv.cfg
 test
 res
+topLeftDatasets
+8-2Dataset
+*.pyc
+*.zip
