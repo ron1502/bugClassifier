@@ -6,7 +6,7 @@ import torch.nn as nn
 from bugDataset import *
 import os
 import math
-
+from CAM import *
 
 
 def saveModel(model, fileName):
@@ -19,8 +19,7 @@ def saveModel(model, fileName):
     torch.save(model.state_dict(), os.path.join(savePath))
 
 
-model = models.resnet50(pretrained=False)
-model.fc = nn.Linear(2048, len(indexToLabel), True)
+model = getPrepedResnet50()
 
 imgPath = os.path.join("8-2Dataset", "train")
 bugData = bugDataset(imgPath)
@@ -67,7 +66,7 @@ for i in range(epoch):
         it += 1
 
     if((i + 1) % 64 == 0):
-        saveModel(model, "resnet50-{}".format(i))
+        saveModel(model, "CAM-resnet50-{}".format(i))
 
     print("\tAverage Loss: {}".format(epochAverageLoss/math.ceil(len(bugData)/batch_size)))
     print("\tAccuracy: {}".format(accuracy/len(bugData) * 100))

@@ -3,15 +3,15 @@ import torch
 import os
 import torch.nn as nn
 from bugDataset import *
-
+from CAM import *
 
 def test(testDataset, modelPath):
     for modelName in modelPath:
         print("Loading {}".format(modelName))
         savePath = os.path.join("res", "model", modelName)
 
-        model = torchvision.models.resnet50(pretrained=False)
-        model.fc = nn.Linear(2048, len(indexToLabel), True)
+        model = getPrepedResnet50()
+        setupModel(model)
         model.load_state_dict(torch.load(savePath))
 
         print("Loading Testing dataset")
@@ -50,10 +50,10 @@ def test(testDataset, modelPath):
                 f.write("{}: {}\n".format(indexToLabel[key], wrongCount[key]))
         '''
 
-modelList = ["resnet50-63", "resnet50-127",
-             "resnet50-191", "resnet50-255",
-             "resnet50-319", "resnet50-383",
-             "resnet50-447", "resnet50-511"]
+modelList = ["CAM-resnet50-63", "CAM-resnet50-127",
+             "CAM-resnet50-191", "CAM-resnet50-255",
+             "CAM-resnet50-319", "CAM-resnet50-383",
+             "CAM-resnet50-447", "CAM-resnet50-511"]
 imgPath = os.path.join("topLeftDatasets", "test")
 testDataset = bugDataset(imgPath)
 
